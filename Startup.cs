@@ -12,6 +12,7 @@ namespace WebApi
 {
     public class Startup
     {
+        readonly string FrontendOrigin = "http://localhost:3000";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -46,6 +47,20 @@ namespace WebApi
                             ValidateIssuerSigningKey = true,
                         };
                     });
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    name: FrontendOrigin,
+                    builder =>
+                    {
+                        builder.WithOrigins(
+                            "http://localhost:3000",
+                            "http://localhost:3000/"
+                        );
+                    }
+               );
+            });
             //services.AddControllersWithViews();
             services.AddControllers().AddNewtonsoftJson();
             services.AddMvc().AddControllersAsServices();
@@ -72,6 +87,7 @@ namespace WebApi
 
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseCors(FrontendOrigin);
 
             app.UseEndpoints(endpoints =>
             {

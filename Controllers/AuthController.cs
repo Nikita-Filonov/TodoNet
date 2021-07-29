@@ -24,7 +24,10 @@ namespace WebApi.Controllers
             var identity = GetIdentity(email, password);
             if (identity == null)
             {
-                return BadRequest(new { errorText = "Invalid username or password." });
+                return BadRequest(new { 
+                    message = "Invalid username or password.",
+                    level = "danger"
+                });
             }
 
             var now = DateTime.UtcNow;
@@ -52,13 +55,13 @@ namespace WebApi.Controllers
             var userId = _context.Users
                 .Where(user => user.Email == email && user.Password == password)
                 .Select(user => user.Id)
-                .SingleOrDefault()
-                .ToString();
-            if (userId != null)
+                .SingleOrDefault();
+ 
+            if (userId != 0)
             {
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimsIdentity.DefaultNameClaimType, userId),
+                    new Claim(ClaimsIdentity.DefaultNameClaimType, userId.ToString()),
                 };
                 ClaimsIdentity claimsIdentity =
                 new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,

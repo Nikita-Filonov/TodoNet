@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApi.Models
@@ -14,6 +15,9 @@ namespace WebApi.Models
         [MaxLength(50)]
         public string Tag { get; set; }
         public bool IsComplete { get; set; } = false;
+        [DataType(DataType.DateTime)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime Created { get; set; } = DateTime.Now;
         //[ForeignKey("User")]
         public int UserId { get; set; }
         public User User { get; set; }
