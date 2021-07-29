@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using WebApi.Models; // класс Person
+using WebApi.Models;
 
 namespace WebApi.Controllers
 {
@@ -18,7 +18,7 @@ namespace WebApi.Controllers
             _context = context;
         }
 
-        [HttpPost("/token")]
+        [HttpPost("/api/v1/token")]
         public IActionResult Token(string email, string password)
         {
             var identity = GetIdentity(email, password);
