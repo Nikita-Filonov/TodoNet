@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using WebApi.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace WebApi.Models
 {

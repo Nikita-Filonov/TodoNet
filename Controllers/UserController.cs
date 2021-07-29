@@ -1,14 +1,8 @@
 ﻿using System;
-using System.IO;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Models;
-using System.Text.Json;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 
@@ -26,7 +20,6 @@ namespace WebApi.Controllers
             _context = context;
         }
 
-        // GET: TodoItems
         [HttpPost("/api/v1/users")]
         public IActionResult Post([FromBody] User user)
         {
@@ -51,6 +44,7 @@ namespace WebApi.Controllers
             return Ok(dbUser);
         }
 
+        [Authorize]
         [HttpGet("/api/v1/users/{userId}")]
         public IActionResult GetUser(int userId)
         {
@@ -63,15 +57,23 @@ namespace WebApi.Controllers
             return Ok(dbUser);
         }
 
+        [Authorize]
         [HttpDelete("/api/v1/users/{userId}")]
-        public NoContentResult DeleteUser(int userId)
+        public IActionResult DeleteUser(int userId)
         {
             User user = new User() { Id = userId };
+
+            if (userId != Int64.Parse(User.Identity.Name))
+            {
+                return new ForbidResult();
+            }
+
             _context.Users.Remove(user);
             _context.SaveChanges();
             return new NoContentResult();
         }
 
+        [Authorize]
         [HttpPatch("/api/v1/users/{userId}")]
         public IActionResult UpdateUser(int userId, [FromBody] JsonPatchDocument<User> patchDoc)
         {
