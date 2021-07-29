@@ -1,14 +1,8 @@
 ﻿using System;
-using System.IO;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebApi.Models;
-using System.Text.Json;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 
@@ -30,22 +24,22 @@ namespace WebApi.Controllers
 
         [Authorize]
         [HttpGet("/api/v1/tasks")]
-        public JsonResult Get()
+        public JsonResult GetTodoItems()
         {
             var todoItems = _context.TodoItems
                 .Where(todoItem => todoItem.UserId == Int64.Parse(User.Identity.Name));
             return new JsonResult(todoItems);
         }
 
+        [Authorize]
         [HttpPost("/api/v1/tasks")]
-        public IActionResult Post([FromBody] TodoItem todoItem)
+        public IActionResult CreateTodoItem([FromBody] TodoItem todoItem)
         {
-            var dbUser = _context.TodoItems.Find(todoItem.UserId);
             TodoItem dbTodoItem = new TodoItem
             {
                 Title = todoItem.Title,
                 Tag = todoItem.Tag,
-                UserId = todoItem.UserId
+                UserId = (int)Int64.Parse(User.Identity.Name)
             };
 
             _context.TodoItems.AddRange(dbTodoItem);
@@ -62,6 +56,7 @@ namespace WebApi.Controllers
             return Ok(dbTodoItem);
         }
 
+        [Authorize]
         [HttpGet("/api/v1/tasks/{taskId}")]
         public IActionResult GetTodoItem(int taskId)
         {
@@ -74,15 +69,26 @@ namespace WebApi.Controllers
             return Ok(dbTodoItem);
         }
 
+        [Authorize]
         [HttpDelete("/api/v1/tasks/{taskId}")]
-        public NoContentResult DeleteTodoItem(int taskId)
+        public IActionResult DeleteTodoItem(int taskId)
         {
             TodoItem todoItem = new TodoItem() { Id = taskId };
-            _context.TodoItems.Remove(todoItem);
-            _context.SaveChanges();
+         
+            try
+            {
+                _context.TodoItems.Remove(todoItem);
+                _context.SaveChanges();
+            }
+            catch
+            {
+                return NotFound();
+            }
+            
             return new NoContentResult();
         }
 
+        [Authorize]
         [HttpPatch("/api/v1/tasks/{taskId}")]
         public IActionResult UpdateTodoItem(int taskId, [FromBody] JsonPatchDocument<TodoItem> patchDoc)
         {
