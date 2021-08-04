@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -15,11 +16,14 @@ namespace WebApi.Models
         [MaxLength(50)]
         public string Tag { get; set; }
         public bool IsComplete { get; set; } = false;
+
         [DataType(DataType.DateTime)]
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime Created { get; set; } = DateTime.Now;
+
+        public List<TodoList> TodoItems { get; set; } = new List<TodoList>();
         //[ForeignKey("User")]
-        public int UserId { get; set; }
-        public User User { get; set; }
+        // public int UserId { get; set; }
+        // public User User { get; set; }
     }
 }

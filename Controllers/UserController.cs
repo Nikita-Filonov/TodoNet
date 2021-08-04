@@ -12,10 +12,10 @@ namespace WebApi.Controllers
     [ApiController]
     public class UserController : Controller
     {
-        private readonly UserContext _context;
+        private readonly TodoContext _context;
         public static string FrameworkDescription { get; }
 
-        public UserController(UserContext context)
+        public UserController(TodoContext context)
         {
             _context = context;
         }
@@ -24,7 +24,8 @@ namespace WebApi.Controllers
         public IActionResult Post([FromBody] User user)
         {
 
-            User dbUser = new User { 
+            User dbUser = new()
+            { 
                 Username = user.Username, 
                 Email = user.Email, 
                 Password = user.Password 

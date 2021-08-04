@@ -57,7 +57,9 @@ namespace WebApi
                         builder.WithOrigins(
                             "http://localhost:3000",
                             "http://localhost:3000/"
-                        );
+                        )
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
                     }
                );
             });
@@ -68,7 +70,6 @@ namespace WebApi
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApi", Version = "v1" });
             });
-            services.AddScoped<UserContext>();
             services.AddScoped<TodoContext>();
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

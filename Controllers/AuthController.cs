@@ -11,17 +11,17 @@ namespace WebApi.Controllers
 {
     public class AuthController : Controller
     {
-        private readonly UserContext _context;
+        private readonly TodoContext _context;
 
-        public AuthController(UserContext context)
+        public AuthController(TodoContext context)
         {
             _context = context;
         }
 
         [HttpPost("/api/v1/token")]
-        public IActionResult Token(string email, string password)
+        public IActionResult Token([FromBody] User user)
         {
-            var identity = GetIdentity(email, password);
+            var identity = GetIdentity(user.Email, user.Password);
             if (identity == null)
             {
                 return BadRequest(new { 
@@ -55,8 +55,8 @@ namespace WebApi.Controllers
             var userId = _context.Users
                 .Where(user => user.Email == email && user.Password == password)
                 .Select(user => user.Id)
-                .SingleOrDefault();
- 
+                .FirstOrDefault();
+
             if (userId != 0)
             {
                 var claims = new List<Claim>

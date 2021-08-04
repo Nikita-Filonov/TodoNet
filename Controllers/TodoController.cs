@@ -26,9 +26,9 @@ namespace WebApi.Controllers
         [HttpGet("/api/v1/tasks")]
         public JsonResult GetTodoItems()
         {
-            var todoItems = _context.TodoItems
-                .Where(todoItem => todoItem.UserId == Int64.Parse(User.Identity.Name));
-            return new JsonResult(todoItems);
+           // var todoItems = _context.TodoItems
+            //    .Where(todoItem => todoItem.UserId == Int64.Parse(User.Identity.Name));
+            return new JsonResult("sadasdas");
         }
 
         [Authorize]
@@ -39,7 +39,7 @@ namespace WebApi.Controllers
             {
                 Title = todoItem.Title,
                 Tag = todoItem.Tag,
-                UserId = (int)Int64.Parse(User.Identity.Name)
+               // UserId = (int)Int64.Parse(User.Identity.Name)
             };
 
             _context.TodoItems.AddRange(dbTodoItem);
@@ -105,7 +105,7 @@ namespace WebApi.Controllers
 
             try
             {
-                _context.SaveChangesAsync();
+                _context.SaveChanges();
             }
             catch (DbUpdateConcurrencyException)
             {

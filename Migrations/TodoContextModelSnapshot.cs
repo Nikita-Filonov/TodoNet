@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WebApi.Models;
 
-namespace WebApi.Migrations.Todo
+namespace WebApi.Migrations
 {
     [DbContext(typeof(TodoContext))]
     partial class TodoContextModelSnapshot : ModelSnapshot
@@ -18,6 +18,36 @@ namespace WebApi.Migrations.Todo
                 .HasAnnotation("Relational:MaxIdentifierLength", 63)
                 .HasAnnotation("ProductVersion", "5.0.8")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+            modelBuilder.Entity("TodoItemTodoList", b =>
+                {
+                    b.Property<int>("TodoItemsId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TodoItemsId1")
+                        .HasColumnType("integer");
+
+                    b.HasKey("TodoItemsId", "TodoItemsId1");
+
+                    b.HasIndex("TodoItemsId1");
+
+                    b.ToTable("TodoItemTodoList");
+                });
+
+            modelBuilder.Entity("TodoListUser", b =>
+                {
+                    b.Property<int>("UsersId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UsersId1")
+                        .HasColumnType("integer");
+
+                    b.HasKey("UsersId", "UsersId1");
+
+                    b.HasIndex("UsersId1");
+
+                    b.ToTable("TodoListUser");
+                });
 
             modelBuilder.Entity("WebApi.Models.TodoItem", b =>
                 {
@@ -42,14 +72,26 @@ namespace WebApi.Migrations.Todo
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.HasKey("Id");
+
+                    b.ToTable("TodoItems");
+                });
+
+            modelBuilder.Entity("WebApi.Models.TodoList", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("TodoItems");
+                    b.ToTable("TodoLists");
                 });
 
             modelBuilder.Entity("WebApi.Models.User", b =>
@@ -74,23 +116,37 @@ namespace WebApi.Migrations.Todo
 
                     b.HasKey("Id");
 
-                    b.ToTable("User");
+                    b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("WebApi.Models.TodoItem", b =>
+            modelBuilder.Entity("TodoItemTodoList", b =>
                 {
-                    b.HasOne("WebApi.Models.User", "User")
-                        .WithMany("TodoItems")
-                        .HasForeignKey("UserId")
+                    b.HasOne("WebApi.Models.TodoItem", null)
+                        .WithMany()
+                        .HasForeignKey("TodoItemsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.HasOne("WebApi.Models.TodoList", null)
+                        .WithMany()
+                        .HasForeignKey("TodoItemsId1")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
-            modelBuilder.Entity("WebApi.Models.User", b =>
+            modelBuilder.Entity("TodoListUser", b =>
                 {
-                    b.Navigation("TodoItems");
+                    b.HasOne("WebApi.Models.TodoList", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebApi.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId1")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
