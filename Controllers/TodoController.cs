@@ -23,29 +23,32 @@ namespace WebApi.Controllers
 
 
         [Authorize]
-        [HttpGet("/api/v1/tasks")]
-        public JsonResult GetTodoItems()
+        [HttpGet("/api/v1/lists/{listId}/tasks")]
+        public JsonResult GetTodoItems(int listId)
         {
-           // var todoItems = _context.TodoItems
-            //    .Where(todoItem => todoItem.UserId == Int64.Parse(User.Identity.Name));
-            return new JsonResult("sadasdas");
+            var todoList = _context.TodoLists
+                .Where(list => list.Id == listId)
+                .Select(list => list.TodoItems)
+                .ToList();
+
+            return new JsonResult(todoList[0]);
         }
 
         [Authorize]
-        [HttpPost("/api/v1/tasks")]
-        public IActionResult CreateTodoItem([FromBody] TodoItem todoItem)
+        [HttpPost("/api/v1/lists/{listId}/tasks")]
+        public IActionResult CreateTodoItem(int listId, [FromBody] TodoItem todoItem)
         {
-            TodoItem dbTodoItem = new TodoItem
+            TodoItem dbTodoItem = new ()
             {
                 Title = todoItem.Title,
                 Tag = todoItem.Tag,
-               // UserId = (int)Int64.Parse(User.Identity.Name)
             };
 
             _context.TodoItems.AddRange(dbTodoItem);
-            _context.SaveChanges();
             try
             {
+                var dbTodoList = _context.TodoLists.Find(listId);
+                dbTodoList.TodoItems.Add(dbTodoItem);
                 _context.SaveChanges();
             }
             catch
@@ -53,27 +56,20 @@ namespace WebApi.Controllers
                 return BadRequest();
             }
 
-            return Ok(dbTodoItem);
+            return Ok(new {
+                dbTodoItem.Id,
+                dbTodoItem.Title,
+                dbTodoItem.Tag,
+                dbTodoItem.IsComplete,
+                dbTodoItem.Created
+            });
         }
 
         [Authorize]
-        [HttpGet("/api/v1/tasks/{taskId}")]
-        public IActionResult GetTodoItem(int taskId)
-        {
-            var dbTodoItem = _context.TodoItems.Find(taskId);
-
-            if (dbTodoItem == null)
-            {
-                return NotFound();
-            }
-            return Ok(dbTodoItem);
-        }
-
-        [Authorize]
-        [HttpDelete("/api/v1/tasks/{taskId}")]
+        [HttpDelete("/api/v1/lists/{listId}/tasks/{taskId}")]
         public IActionResult DeleteTodoItem(int taskId)
-        {
-            TodoItem todoItem = new TodoItem() { Id = taskId };
+        {          
+            TodoItem todoItem = new () { Id = taskId };
          
             try
             {
@@ -89,10 +85,10 @@ namespace WebApi.Controllers
         }
 
         [Authorize]
-        [HttpPatch("/api/v1/tasks/{taskId}")]
+        [HttpPatch("/api/v1/lists/{listId}/tasks/{taskId}")]
         public IActionResult UpdateTodoItem(int taskId, [FromBody] JsonPatchDocument<TodoItem> patchDoc)
         {
-            var dbTodoItem = _context.TodoItems.FirstOrDefault(user => user.Id == taskId);
+            var dbTodoItem = _context.TodoItems.FirstOrDefault(todoItem => todoItem.Id == taskId);
 
             patchDoc.ApplyTo(dbTodoItem, ModelState);
 

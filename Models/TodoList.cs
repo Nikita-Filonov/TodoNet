@@ -15,6 +15,9 @@ namespace WebApi.Models
         [MaxLength(255)]
         public string Title { get; set; }
 
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime Created { get; set; } = DateTime.Now;
+
         public List<User> Users { get; set; } = new List<User>();
         
         public List<TodoItem> TodoItems { get; set; } = new List<TodoItem>();

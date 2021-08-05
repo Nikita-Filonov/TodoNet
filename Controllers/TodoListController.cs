@@ -21,6 +21,24 @@ namespace WebApi.Controllers
             _context = context;
         }
 
+        [Authorize]
+        [HttpGet("/api/v1/lists")]
+        public IActionResult GetTodoLists()
+        {
+            var dbTodoLists = _context.TodoLists
+                .Where(l => l.Users.All(u => u.Id == (int)Int64.Parse(User.Identity.Name)))
+                .Select(list => new { 
+                    list.Id,
+                    list.Title,
+                    list.Users,
+                    list.TodoItems,
+                    list.Created
+                })
+                .ToList();
+
+            return Ok(dbTodoLists);
+        }
+
 
         [Authorize]
         [HttpPost("/api/v1/lists")]
@@ -34,18 +52,68 @@ namespace WebApi.Controllers
             _context.TodoLists.AddRange(dbTodoList);
             try
             {
-                _context.SaveChanges();
                 var dbUser = _context.Users.Find((int)Int64.Parse(User.Identity.Name));
                 dbTodoList.Users.Add(dbUser);
+                _context.SaveChanges();
             }
             catch
             {
                 return BadRequest();
             }
+            return Ok(new {
+                dbTodoList.Id,
+                dbTodoList.Title,
+                dbTodoList.Users,
+                dbTodoList.TodoItems,
+                dbTodoList.Created
+            });
+        }
+
+        [Authorize]
+        [HttpDelete("/api/v1/lists/{listId}")]
+        public IActionResult DeleteTodoList(int listId)
+        {
+            TodoList todoList = new TodoList() { Id = listId };
+
+            try
+            {
+                _context.TodoLists.Remove(todoList);
+                _context.SaveChanges();
+            }
+            catch
+            {
+                return NotFound();
+            }
+
+            return new NoContentResult();
+        }
+
+        [Authorize]
+        [HttpPatch("/api/v1/lists/{listId}")]
+        public IActionResult UpdateTodoList(int listId, [FromBody] JsonPatchDocument<TodoList> patchDoc)
+        {
+            var dbTodoList = _context.TodoLists.FirstOrDefault(list => list.Id == listId);
+
+            patchDoc.ApplyTo(dbTodoList, ModelState);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            _context.Update(dbTodoList);
+
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return NotFound();
+            }
 
             return Ok(dbTodoList);
         }
-
     }
 }
 

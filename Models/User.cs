@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -20,6 +21,7 @@ namespace WebApi.Models
         [MaxLength(255)]
         public string Email { get; set; }
 
+        [JsonIgnore]
         public List<TodoList> Users { get; set; } = new List<TodoList>();
 
 
