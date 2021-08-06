@@ -11,6 +11,7 @@ namespace WebApi.Models
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=Coool12345");
+            //optionsBuilder.UseNpgsql(Utils.Utils.ProductionDbBuilder());
         }
     }
 }

@@ -9,6 +9,7 @@ FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 COPY ["WebApi.csproj", "."]
 RUN dotnet restore "./WebApi.csproj"
+RUN dotnet tool install --global dotnet-ef
 COPY . .
 WORKDIR "/src/."
 RUN dotnet build "WebApi.csproj" -c Release -o /app/build
@@ -19,4 +20,4 @@ RUN dotnet publish "WebApi.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "WebApi.dll"]
+CMD ASPNETCORE_URLS=http://*:$PORT dotnet WebApi.dll
