@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -24,7 +25,7 @@ namespace WebApi.Models
         [JsonIgnore]
         public List<TodoList> Users { get; set; } = new List<TodoList>();
 
-
+        public int[] ImportantTodos { get; set; }
         //  public ICollection<TodoItem> TodoItems { get; set; }
     }
 }

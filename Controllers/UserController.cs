@@ -91,7 +91,7 @@ namespace WebApi.Controllers
            
             try
             {
-                _context.SaveChangesAsync();
+                _context.SaveChanges();
             }
             catch (DbUpdateConcurrencyException)
             {
