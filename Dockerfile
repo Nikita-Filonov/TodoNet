@@ -8,6 +8,7 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 COPY ["WebApi.csproj", "."]
+COPY ["Migrations/", "./Migrations"]
 RUN dotnet restore "./WebApi.csproj"
 RUN dotnet tool install --global dotnet-ef
 COPY . .

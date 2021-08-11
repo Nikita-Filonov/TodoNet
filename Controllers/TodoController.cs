@@ -21,6 +21,11 @@ namespace WebApi.Controllers
             _context = context;
         }
 
+        [HttpGet("/api/v1/health-check/")]
+        public JsonResult HealthCheck()
+        {
+            return new JsonResult(new { success = true });
+        }
 
         [Authorize]
         [HttpGet("/api/v1/lists/{listId}/tasks")]
