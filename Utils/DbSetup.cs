@@ -1,14 +1,11 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
-using System;
-using WebApi.Models;
+﻿using System;
 
 
 namespace WebApi.Utils
 {
     public static class DbSetup
     {
-        public static bool Debug = true;
+        public static bool isDevelopment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
         public static string GetHerokuConnectionString()
         {
             string connectionUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
@@ -22,7 +19,7 @@ namespace WebApi.Utils
         }
 
         public static string DatabaseConnectionString =>
-           Debug
+           isDevelopment
             ? "Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=Coool12345"
             : GetHerokuConnectionString();
     }
