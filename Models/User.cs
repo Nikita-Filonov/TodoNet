@@ -14,6 +14,7 @@ namespace WebApi.Models
         [MaxLength(255)]
         public string Username { get; set; }
 
+        [Required]
         [MaxLength(70)]
         public string Password { get; set; }
 
@@ -28,5 +29,14 @@ namespace WebApi.Models
 
         public int[] ImportantGroups { get; set; } = System.Array.Empty<int>();
         //  public ICollection<TodoItem> TodoItems { get; set; }
+    }
+
+    public class UserDto
+    {
+        public int Id { get; set; }
+        public string Username { get; set; }
+        public string Email { get; set; }
+        public int[] ImportantTodos { get; set; }
+        public int[] ImportantGroups { get; set; }
     }
 }

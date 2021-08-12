@@ -20,9 +20,25 @@ namespace WebApi.Controllers
             _context = context;
         }
 
+        public UserDto UserResponseData(User user)
+        {
+            return new UserDto
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Email = user.Email,
+                ImportantTodos = user.ImportantTodos,
+                ImportantGroups = user.ImportantGroups
+            };
+        }
+
         [HttpPost("/api/v1/users")]
         public IActionResult Post([FromBody] User user)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
             User dbUser = new()
             { 
@@ -30,19 +46,9 @@ namespace WebApi.Controllers
                 Email = user.Email, 
                 Password = user.Password 
             };
-
             _context.Users.AddRange(dbUser);
-
-            try
-            {
-                _context.SaveChanges();
-            }
-            catch
-            {
-                return BadRequest();
-            }
-            
-            return Ok(dbUser);
+            _context.SaveChanges();
+            return Ok(UserResponseData(dbUser));
         }
 
         [Authorize]
@@ -55,7 +61,7 @@ namespace WebApi.Controllers
             {
                 return NotFound();
             }
-            return Ok(dbUser);
+            return Ok(UserResponseData(dbUser));
         }
 
         [Authorize]
@@ -66,7 +72,7 @@ namespace WebApi.Controllers
 
             if (userId != Int64.Parse(User.Identity.Name))
             {
-                return new ForbidResult();
+                return Utils.Errors.ForbiddenError();
             }
 
             _context.Users.Remove(user);
@@ -79,6 +85,11 @@ namespace WebApi.Controllers
         public IActionResult UpdateUser(int userId, [FromBody] JsonPatchDocument<User> patchDoc)
         {
             var dbUser = _context.Users.FirstOrDefault(user => user.Id == userId);
+
+            if (userId != Int64.Parse(User.Identity.Name))
+            {
+                return Utils.Errors.ForbiddenError();
+            }
 
             patchDoc.ApplyTo(dbUser, ModelState);
 
@@ -98,7 +109,7 @@ namespace WebApi.Controllers
               return NotFound();
             }
 
-            return Ok(dbUser);
+            return Ok(UserResponseData(dbUser));
         }
     }
 }
