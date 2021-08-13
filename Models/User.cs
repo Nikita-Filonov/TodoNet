@@ -39,4 +39,11 @@ namespace WebApi.Models
         public int[] ImportantTodos { get; set; }
         public int[] ImportantGroups { get; set; }
     }
+
+    public class UserPublicDto
+    {
+        public int Id { get; set; }
+        public string Username { get; set; }
+        public string Email { get; set; }
+    }
 }

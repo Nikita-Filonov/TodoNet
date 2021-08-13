@@ -40,10 +40,39 @@ namespace WebApi.Controllers
             return Ok(dbTodoLists);
         }
 
+        [Authorize]
+        [HttpGet("/api/v1/lists/{listId}")]
+        public IActionResult GetTodoList(int listId)
+        {
+            var isUserInList = _context.TodoLists
+                .Where(l => l.Users.All(u => u.Id == (int)Int64.Parse(User.Identity.Name)))
+                .FirstOrDefault(l => l.Id == listId);
+
+            if (isUserInList == null)
+            {
+                return Utils.Errors.ForbiddenError();
+            }
+                
+            var todoList = _context.TodoLists
+                .Where(l => l.Id == listId)
+                .Select(list => new
+                {
+                    list.Id,
+                    list.Title,
+                    Users = list.Users
+                    .Select(u => new { u.Id, u.Username, u.Email }),
+                    list.TodoItems,
+                    list.Created
+                })
+                .FirstOrDefault();
+
+            return Ok(todoList);
+        }
+
 
         [Authorize]
         [HttpPost("/api/v1/lists")]
-        public IActionResult CreateTodoLIst([FromBody] TodoList todoList)
+        public IActionResult CreateTodoList([FromBody] TodoList todoList)
         {
             TodoList dbTodoList = new()
             {
@@ -75,11 +104,18 @@ namespace WebApi.Controllers
         [HttpDelete("/api/v1/lists/{listId}")]
         public IActionResult DeleteTodoList(int listId)
         {
-            TodoList todoList = new TodoList() { Id = listId };
+            var dbTodoList = _context.TodoLists
+                .Where(l => l.Users.All(u => u.Id == (int)Int64.Parse(User.Identity.Name)))
+                .FirstOrDefault(l => l.Id == listId);
+
+            if (dbTodoList == null)
+            {
+                return Utils.Errors.ForbiddenError();
+            }
 
             try
             {
-                _context.TodoLists.Remove(todoList);
+                _context.TodoLists.Remove(dbTodoList);
                 _context.SaveChanges();
             }
             catch
@@ -95,7 +131,13 @@ namespace WebApi.Controllers
         public IActionResult UpdateTodoList(int listId, [FromBody] JsonPatchDocument<TodoList> patchDoc)
         {
             var dbTodoList = _context.TodoLists
-                .FirstOrDefault(list => list.Id == listId);
+                .Where(l => l.Users.All(u => u.Id == (int)Int64.Parse(User.Identity.Name)))
+                .FirstOrDefault(l => l.Id == listId);
+
+            if (dbTodoList == null)
+            {
+                return Utils.Errors.ForbiddenError();
+            }
 
             patchDoc.ApplyTo(dbTodoList, ModelState);
 

@@ -20,7 +20,7 @@ namespace WebApi.Controllers
             _context = context;
         }
 
-        public UserPrivateDto UserResponseData(User user)
+        protected UserPrivateDto UserResponseData(User user)
         {
             return new UserPrivateDto
             {
