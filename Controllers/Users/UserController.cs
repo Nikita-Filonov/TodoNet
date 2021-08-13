@@ -20,9 +20,9 @@ namespace WebApi.Controllers
             _context = context;
         }
 
-        public UserDto UserResponseData(User user)
+        public UserPrivateDto UserResponseData(User user)
         {
-            return new UserDto
+            return new UserPrivateDto
             {
                 Id = user.Id,
                 Username = user.Username,

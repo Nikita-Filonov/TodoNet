@@ -31,7 +31,7 @@ namespace WebApi.Models
         //  public ICollection<TodoItem> TodoItems { get; set; }
     }
 
-    public class UserDto
+    public class UserPrivateDto
     {
         public int Id { get; set; }
         public string Username { get; set; }

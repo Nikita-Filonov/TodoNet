@@ -30,7 +30,8 @@ namespace WebApi.Controllers
                 .Select(list => new { 
                     list.Id,
                     list.Title,
-                    list.Users,
+                    Users = list.Users
+                    .Select(u => new { u.Id, u.Username, u.Email }),
                     list.TodoItems,
                     list.Created
                 })
@@ -63,7 +64,8 @@ namespace WebApi.Controllers
             return Ok(new {
                 dbTodoList.Id,
                 dbTodoList.Title,
-                dbTodoList.Users,
+                Users = dbTodoList.Users
+                .Select(u => new { u.Id, u.Username, u.Email }),
                 dbTodoList.TodoItems,
                 dbTodoList.Created
             });
@@ -92,7 +94,8 @@ namespace WebApi.Controllers
         [HttpPatch("/api/v1/lists/{listId}")]
         public IActionResult UpdateTodoList(int listId, [FromBody] JsonPatchDocument<TodoList> patchDoc)
         {
-            var dbTodoList = _context.TodoLists.FirstOrDefault(list => list.Id == listId);
+            var dbTodoList = _context.TodoLists
+                .FirstOrDefault(list => list.Id == listId);
 
             patchDoc.ApplyTo(dbTodoList, ModelState);
 
@@ -112,7 +115,19 @@ namespace WebApi.Controllers
                 return NotFound();
             }
 
-            return Ok(dbTodoList);
+            var todoList = _context.TodoLists
+                .Where(l => l.Id == listId)
+                .Select(list => new
+                {
+                    list.Id,
+                    list.Title,
+                    Users = list.Users
+                    .Select(u => new { u.Id, u.Username, u.Email }),
+                    list.TodoItems,
+                    list.Created
+                })
+                .FirstOrDefault();
+            return Ok(todoList);
         }
     }
 }
