@@ -46,4 +46,11 @@ namespace WebApi.Models
         public string Username { get; set; }
         public string Email { get; set; }
     }
+
+    public class UserResetPasswordDto
+    {
+        public string CurrentPassword { get; set; }
+        public string NewPassword { get; set; }
+        public string ConfirmPassword { get; set; }
+    }
 }
