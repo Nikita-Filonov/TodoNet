@@ -35,6 +35,15 @@ namespace WebApi.Controllers
         [HttpPost("/api/v1/users")]
         public IActionResult Post([FromBody] User user)
         {
+            var isUserExists = _context.Users.Any(u => u.Email == user.Email);
+            if (isUserExists)
+            {
+                return BadRequest(new { 
+                  message = $"User with email {user.Email} already exists",
+                  level = "danger"
+                });
+            }
+            
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -68,7 +77,7 @@ namespace WebApi.Controllers
         [HttpDelete("/api/v1/users/{userId}")]
         public IActionResult DeleteUser(int userId)
         {
-            User user = new User() { Id = userId };
+            User user = new() { Id = userId };
 
             if (userId != Int64.Parse(User.Identity.Name))
             {
