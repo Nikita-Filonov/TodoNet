@@ -17,6 +17,7 @@ namespace WebApi.Models
         public string Title { get; set; }
         [MaxLength(50)]
         public string Tag { get; set; }
+        public string Description { get; set; }
         public bool IsComplete { get; set; } = false;
 
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]

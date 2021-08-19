@@ -15,6 +15,9 @@ namespace WebApi.Models
         [MaxLength(255)]
         public string Title { get; set; }
 
+        [MaxLength(50)]
+        public string Background { get; set; }
+
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime Created { get; set; } = DateTime.Now;
 

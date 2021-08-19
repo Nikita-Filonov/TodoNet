@@ -36,10 +36,11 @@ namespace WebApi.Controllers
         [HttpPost("/api/v1/lists/{listId}/tasks")]
         public IActionResult CreateTodoItem(int listId, [FromBody] TodoItem todoItem)
         {
-            TodoItem dbTodoItem = new ()
+            TodoItem dbTodoItem = new()
             {
                 Title = todoItem.Title,
                 Tag = todoItem.Tag,
+                Description = todoItem.Description
             };
 
             _context.TodoItems.AddRange(dbTodoItem);
@@ -59,7 +60,8 @@ namespace WebApi.Controllers
                 dbTodoItem.Title,
                 dbTodoItem.Tag,
                 dbTodoItem.IsComplete,
-                dbTodoItem.Created
+                dbTodoItem.Created,
+                dbTodoItem.Description
             });
         }
 

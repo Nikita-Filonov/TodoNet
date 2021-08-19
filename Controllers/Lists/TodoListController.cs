@@ -33,7 +33,8 @@ namespace WebApi.Controllers
                     Users = list.Users
                     .Select(u => new { u.Id, u.Username, u.Email }),
                     list.TodoItems,
-                    list.Created
+                    list.Created,
+                    list.Background
                 })
                 .ToList();
 
@@ -62,7 +63,8 @@ namespace WebApi.Controllers
                     Users = list.Users
                     .Select(u => new { u.Id, u.Username, u.Email }),
                     list.TodoItems,
-                    list.Created
+                    list.Created,
+                    list.Background
                 })
                 .FirstOrDefault();
 
@@ -77,6 +79,7 @@ namespace WebApi.Controllers
             TodoList dbTodoList = new()
             {
                 Title = todoList.Title,
+                Background = todoList.Background
             };
 
             _context.TodoLists.AddRange(dbTodoList);
@@ -96,7 +99,8 @@ namespace WebApi.Controllers
                 Users = dbTodoList.Users
                 .Select(u => new { u.Id, u.Username, u.Email }),
                 dbTodoList.TodoItems,
-                dbTodoList.Created
+                dbTodoList.Created,
+                dbTodoList.Background
             });
         }
 
@@ -166,7 +170,8 @@ namespace WebApi.Controllers
                     Users = list.Users
                     .Select(u => new { u.Id, u.Username, u.Email }),
                     list.TodoItems,
-                    list.Created
+                    list.Created,
+                    list.Background
                 })
                 .FirstOrDefault();
             return Ok(todoList);
